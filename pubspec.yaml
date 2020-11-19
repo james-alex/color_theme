@@ -1,0 +1,19 @@
+name: color_theme
+description: >-
+  A general purpose color theming solution for modular Flutter packages,
+  with a collection of pre-defined themes.
+version: 0.0.1
+homepage: https://github.com/james-alex/color_theme
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0 <2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provide_this: ^0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
