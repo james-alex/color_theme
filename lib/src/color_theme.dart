@@ -14,6 +14,7 @@ import 'package:flutter/widgets.dart';
     this.accentColor,
     this.contrastColor,
     this.backgroundColor,
+    this.buttonColor,
     this.dividerColor,
     this.focusColor,
     this.hoverColor,
@@ -45,6 +46,9 @@ import 'package:flutter/widgets.dart';
   /// [ThemeData.scaffoldBackgroundColor](https://api.flutter.dev/flutter/material/ThemeData/scaffoldBackgroundColor.html)
   /// property.
   final Color backgroundColor;
+
+  /// The background color of buttons.
+  final Color buttonColor;
 
   /// The color of dividers.
   final Color dividerColor;
@@ -111,6 +115,7 @@ import 'package:flutter/widgets.dart';
         primaryColor: primaryColor,
         accentColor: accentColor,
         backgroundColor: backgroundColor,
+        buttonColor: buttonColor,
         dividerColor: dividerColor,
         focusColor: focusColor,
         hoverColor: hoverColor,
