@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart' show ThemeData;
 import 'package:flutter/widgets.dart';
-import 'package:provide_this/provide_this.dart';
 
 /// A general purpose color theming solution for modular Flutter packages,
 /// with a collection of pre-defined themes, derived from Flutter's Material
 /// [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
 /// class.
-class ColorTheme with ProvideTo<ColorTheme> {
   /// A general purpose color theming solution for modular Flutter packages,
   /// with a collection of pre-defined themes, derived from Flutter's Material
   /// [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
