@@ -2,16 +2,18 @@ import 'package:flutter_object_map/flutter_object_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-/// A general purpose color theming solution for modular Flutter packages,
-/// with a collection of pre-defined themes, derived from Flutter's Material
-/// [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
-/// class.
+/// A color themeing solution with support for handling locally and
+/// globally applied themes, and the combination thereof.
+///
+/// [ColorTheme] is derived from and is compatible with Flutter's
+/// Material [ThemeData] object.
 @immutable
 class ColorTheme implements MergeableObject<ColorTheme> {
-  /// A general purpose color theming solution for modular Flutter packages,
-  /// with a collection of pre-defined themes, derived from Flutter's Material
-  /// [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
-  /// class.
+  /// A color themeing solution with support for handling locally and
+  /// globally applied themes, and the combination thereof.
+  ///
+  /// [ColorTheme] is derived from and is compatible with Flutter's
+  /// Material [ThemeData] object.
   const ColorTheme({
     this.key,
     this.primaryColor,
@@ -31,7 +33,7 @@ class ColorTheme implements MergeableObject<ColorTheme> {
   });
 
   /// A unique identifier used to define and retrieve global [ColorTheme]s
-  /// with the [ColorTheme.global] factory constructor and the related
+  /// with the [ColorTheme.global] constructor/provider and the related
   /// static methods.
   final Key key;
 
@@ -98,8 +100,8 @@ class ColorTheme implements MergeableObject<ColorTheme> {
   /// The color used for error indicators.
   final Color errorColor;
 
-  /// Returns a new [ColorTheme] by merging this theme's colors
-  /// into [colors] `null` values.
+  /// Returns a new [ColorTheme] containing `this` theme's values, where
+  /// any `null` values fallback to [colors]' values.
   @override
   ColorTheme merge(ColorTheme colors) {
     assert(colors != null);
@@ -178,19 +180,19 @@ class ColorTheme implements MergeableObject<ColorTheme> {
 
   /// Creates or retrieves a global [ColorTheme].
   ///
-  /// If a global [ColorTheme] with a corresponding [key]/subtype combination
-  /// doesn't exist, a new global [ColorTheme] will be created. If one
-  /// does exist, the existing theme will be returned, if no additional
-  /// values provided.
+  /// If a global [ColorTheme] associated with the given [key] and sub-type
+  /// ([T]) doesn't exist, a new global [ColorTheme] will be created. However,
+  /// If one does exist, the existing theme will be returned, if no additional
+  /// values were provided.
   ///
-  /// If a global theme does exist and additional values were provided and
-  /// [merge] is `true`, the provided values will be merged into the existing
-  /// global theme, otherwise if `false`, the existing theme will be replaced
-  /// outright with a new [ColorTheme] containing the provided values.
+  /// If a corresponding global theme does exist and additional values were
+  /// provided and [merge] is `true`, the provided values will be merged into
+  /// the existing global theme, otherwise if `false`, the existing theme will
+  /// be replaced outright by a new [ColorTheme] containing the provided values.
   ///
-  /// If [mergeDynamic] is `true`, and a global theme exists with a matching
-  /// [key] and a [dynamic] subtype, the existing [dynamic] global theme will
-  /// be merged into the returned theme.
+  /// If [mergeDynamic] is `true` and a global theme associated with the
+  /// given [key] and a [dynamic] sub-type exists, it will be [merge]d into
+  /// the returned theme.
   static ColorTheme global<T>({
     Key key,
     Color primaryColor,
@@ -250,31 +252,31 @@ class ColorTheme implements MergeableObject<ColorTheme> {
     return colorTheme;
   }
 
-  /// Returns `true` if a global theme with the corresponding [key]/subtype
-  /// combination exists.
+  /// Returns `true` if a global theme associated with the [key] and
+  /// sub-type ([T]) exists.
   static bool globalThemeExists<T>([Key key]) => _global.exists<T>(key: key);
 
-  /// Returns the global theme with the corresponding [key]/subtype combination.
+  /// Returns the global theme associated with the [key] and sub-type ([T]).
   ///
-  /// __Note:__ [dynamic] subtyped themes will not be merged into the returned
-  /// theme, use [ColorTheme.global] to retrieve a theme that is merged with
-  /// the [dynamic] subtyped theme, if one exists.
+  /// Returns `null` if no corresponding global theme exists.
   ///
-  /// Returns `null`, if no matching global theme exists.
+  /// __Note:__ [dynamic] sub-typed themes will not be merged into the returned
+  /// theme, call [ColorTheme.global] to retrieve a theme that is merged with
+  /// the [dynamic] sub-typed theme, if one exists.
   static ColorTheme getGlobalTheme<T>([Key key]) => _global.get<T>(key: key);
 
-  /// Removes the global theme with the corresponding [key]/[type] combination.
+  /// Removes the global theme associated with the [key] and sub-type ([T]).
   static ColorTheme removeGlobalTheme<T>([Key key]) =>
       _global.remove<T>(key: key);
 
-  /// Returns a new [ColorTheme] by [merge]ing the global theme with the
-  /// associated [key] and sub-type into [theme].
+  /// Returns a new [ColorTheme] by merging [theme] with the global theme
+  /// associated with the given [key] and sub-type ([T]).
   ///
-  /// If there is no matching global theme, [theme] will be returned.
+  /// If there is no corresponding global theme, [theme] will be returned.
   /// Likewise, if [theme] is `null`, the global theme will be returned.
   ///
   /// If [mergeDynamic] is `true` and the sub-type ([T]) isn't [dynamic], the
-  /// global theme with the associated [key] and a [dynamic] sub-type will be
+  /// global theme associated with the [key] and a [dynamic] sub-type will be
   /// [merge]d into the returned theme, if one exists.
   static ColorTheme mergeWithGlobal<T>(
     ColorTheme theme, {
@@ -297,7 +299,7 @@ class ColorTheme implements MergeableObject<ColorTheme> {
     return theme.merge(globalTheme);
   }
 
-  /// Returns `true` if no colors were provided to this theme.
+  /// Returns `true` if no colors were provided to `this`.
   bool get _isEmpty =>
       primaryColor == null &&
       accentColor == null &&
