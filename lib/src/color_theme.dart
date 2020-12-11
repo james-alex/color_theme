@@ -1,15 +1,19 @@
-import 'package:flutter/material.dart' show ThemeData;
+import 'package:flutter_object_map/flutter_object_map.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// A general purpose color theming solution for modular Flutter packages,
 /// with a collection of pre-defined themes, derived from Flutter's Material
 /// [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
 /// class.
+@immutable
+class ColorTheme implements MergeableObject<ColorTheme> {
   /// A general purpose color theming solution for modular Flutter packages,
   /// with a collection of pre-defined themes, derived from Flutter's Material
   /// [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
   /// class.
   const ColorTheme({
+    this.key,
     this.primaryColor,
     this.accentColor,
     this.contrastColor,
@@ -25,6 +29,11 @@ import 'package:flutter/widgets.dart';
     this.disabledColor,
     this.errorColor,
   });
+
+  /// A unique identifier used to define and retrieve global [ColorTheme]s
+  /// with the [ColorTheme.global] factory constructor and the related
+  /// static methods.
+  final Key key;
 
   /// The background color of primary components.
   final Color primaryColor;
@@ -89,24 +98,27 @@ import 'package:flutter/widgets.dart';
   /// The color used for error indicators.
   final Color errorColor;
 
-  /// Returns a new [ColorTheme] with the values of [colors], where
-  /// any `null` values default to the values of `this`.
+  /// Returns a new [ColorTheme] by merging this theme's colors
+  /// into [colors] `null` values.
+  @override
   ColorTheme merge(ColorTheme colors) {
     assert(colors != null);
 
     return ColorTheme(
-      primaryColor: colors.primaryColor ?? primaryColor,
-      accentColor: colors.accentColor ?? accentColor,
-      backgroundColor: colors.backgroundColor ?? backgroundColor,
-      dividerColor: colors.dividerColor ?? dividerColor,
-      focusColor: colors.focusColor ?? focusColor,
-      hoverColor: colors.hoverColor ?? hoverColor,
-      highlightColor: colors.highlightColor ?? highlightColor,
-      splashColor: colors.splashColor ?? splashColor,
-      activeColor: colors.activeColor ?? activeColor,
-      inactiveColor: colors.inactiveColor ?? inactiveColor,
-      disabledColor: colors.disabledColor ?? disabledColor,
-      errorColor: colors.errorColor ?? errorColor,
+      key: key ?? colors.key,
+      primaryColor: primaryColor ?? colors.primaryColor,
+      accentColor: accentColor ?? colors.accentColor,
+      backgroundColor: backgroundColor ?? colors.backgroundColor,
+      buttonColor: buttonColor ?? colors.buttonColor,
+      dividerColor: dividerColor ?? colors.dividerColor,
+      focusColor: focusColor ?? colors.focusColor,
+      hoverColor: hoverColor ?? colors.hoverColor,
+      highlightColor: highlightColor ?? colors.highlightColor,
+      splashColor: splashColor ?? colors.splashColor,
+      activeColor: activeColor ?? colors.activeColor,
+      inactiveColor: inactiveColor ?? colors.inactiveColor,
+      disabledColor: disabledColor ?? colors.disabledColor,
+      errorColor: errorColor ?? colors.errorColor,
     );
   }
 
@@ -126,10 +138,179 @@ import 'package:flutter/widgets.dart';
         disabledColor: disabledColor,
         errorColor: errorColor,
       );
-}
 
-/// Adds the [colorTheme] and [materialColorTheme] getters to [BuildContext].
-extension GetColorTheme on BuildContext {
-  /// Gets the [ColorTheme] from the context via a [Provider].
-  ColorTheme get colorTheme => watch<ColorTheme>();
+  /// Returns a new [ColorTheme] containing `this` theme's colors, with any
+  /// `null` values falling back to your [MaterialApp]'s [ThemeData] object,
+  /// or to [ThemeData.fallback] if there is no [Theme] in the given [context].
+  ColorTheme withThemeData(BuildContext context) {
+    assert(context != null);
+
+    final themeData = Theme.of(context);
+
+    return ColorTheme(
+      primaryColor: primaryColor ?? themeData.primaryColor,
+      accentColor: accentColor ?? themeData.accentColor,
+      backgroundColor: backgroundColor ?? themeData.backgroundColor,
+      buttonColor: buttonColor ?? themeData.buttonColor,
+      dividerColor: dividerColor ?? themeData.dividerColor,
+      focusColor: focusColor ?? themeData.focusColor,
+      hoverColor: hoverColor ?? themeData.hoverColor,
+      highlightColor: highlightColor ?? themeData.highlightColor,
+      splashColor: splashColor ?? themeData.splashColor,
+      activeColor: activeColor ?? themeData.toggleableActiveColor,
+      inactiveColor: inactiveColor ?? themeData.unselectedWidgetColor,
+      disabledColor: disabledColor ?? themeData.disabledColor,
+      errorColor: errorColor ?? themeData.errorColor,
+    );
+  }
+
+  /// The map containing the registered global themes.
+  static MergeableObjectMap<ColorTheme> _global =
+      MergeableObjectMap<ColorTheme>();
+
+  /// Registers `this` as a global theme, allowing it to be accessed
+  /// by the [global] theme constructor/provider and related methods.
+  void registerAsGlobal<T>({bool merge = true}) {
+    assert(merge != null);
+
+    _global.add<T>(this, key: key, join: merge ? JoinMethod.merge : null);
+  }
+
+  /// Creates or retrieves a global [ColorTheme].
+  ///
+  /// If a global [ColorTheme] with a corresponding [key]/subtype combination
+  /// doesn't exist, a new global [ColorTheme] will be created. If one
+  /// does exist, the existing theme will be returned, if no additional
+  /// values provided.
+  ///
+  /// If a global theme does exist and additional values were provided and
+  /// [merge] is `true`, the provided values will be merged into the existing
+  /// global theme, otherwise if `false`, the existing theme will be replaced
+  /// outright with a new [ColorTheme] containing the provided values.
+  ///
+  /// If [mergeDynamic] is `true`, and a global theme exists with a matching
+  /// [key] and a [dynamic] subtype, the existing [dynamic] global theme will
+  /// be merged into the returned theme.
+  static ColorTheme global<T>({
+    Key key,
+    Color primaryColor,
+    Color accentColor,
+    Color contrastColor,
+    Color backgroundColor,
+    Color buttonColor,
+    Color dividerColor,
+    Color focusColor,
+    Color hoverColor,
+    Color highlightColor,
+    Color splashColor,
+    Color activeColor,
+    Color inactiveColor,
+    Color disabledColor,
+    Color errorColor,
+    bool merge = true,
+    bool mergeDynamic = true,
+  }) {
+    assert(merge != null);
+    assert(mergeDynamic != null);
+
+    var colorTheme = ColorTheme(
+      primaryColor: primaryColor,
+      accentColor: accentColor,
+      contrastColor: contrastColor,
+      backgroundColor: backgroundColor,
+      buttonColor: buttonColor,
+      dividerColor: dividerColor,
+      focusColor: focusColor,
+      hoverColor: hoverColor,
+      highlightColor: highlightColor,
+      splashColor: splashColor,
+      activeColor: activeColor,
+      inactiveColor: inactiveColor,
+      disabledColor: disabledColor,
+      errorColor: errorColor,
+    );
+
+    if (colorTheme._isEmpty) {
+      // Retrieve the existing global theme if no values were provided.
+      colorTheme = _global.get<T>(key: key);
+    } else {
+      // Otherwise, add the new global theme to the global object map,
+      // replacing or merging it with the existing global theme, if one
+      // exists and [merge] is `true`.
+      colorTheme = _global.add<T>(colorTheme,
+          key: key, join: merge ? JoinMethod.merge : null);
+    }
+
+    // If [mergeDynamic] is `true`, merge the returned theme with
+    // the [dynamic] global theme, if one exists.
+    if (T != dynamic && mergeDynamic && _global.exists<dynamic>(key: key)) {
+      colorTheme = _global.get<dynamic>(key: key).merge(colorTheme);
+    }
+
+    return colorTheme;
+  }
+
+  /// Returns `true` if a global theme with the corresponding [key]/subtype
+  /// combination exists.
+  static bool globalThemeExists<T>([Key key]) => _global.exists<T>(key: key);
+
+  /// Returns the global theme with the corresponding [key]/subtype combination.
+  ///
+  /// __Note:__ [dynamic] subtyped themes will not be merged into the returned
+  /// theme, use [ColorTheme.global] to retrieve a theme that is merged with
+  /// the [dynamic] subtyped theme, if one exists.
+  ///
+  /// Returns `null`, if no matching global theme exists.
+  static ColorTheme getGlobalTheme<T>([Key key]) => _global.get<T>(key: key);
+
+  /// Removes the global theme with the corresponding [key]/[type] combination.
+  static ColorTheme removeGlobalTheme<T>([Key key]) =>
+      _global.remove<T>(key: key);
+
+  /// Returns a new [ColorTheme] by [merge]ing the global theme with the
+  /// associated [key] and sub-type into [theme].
+  ///
+  /// If there is no matching global theme, [theme] will be returned.
+  /// Likewise, if [theme] is `null`, the global theme will be returned.
+  ///
+  /// If [mergeDynamic] is `true` and the sub-type ([T]) isn't [dynamic], the
+  /// global theme with the associated [key] and a [dynamic] sub-type will be
+  /// [merge]d into the returned theme, if one exists.
+  static ColorTheme mergeWithGlobal<T>(
+    ColorTheme theme, {
+    Key key,
+    bool mergeDynamic = true,
+  }) {
+    assert(mergeDynamic != null);
+
+    final globalTheme =
+        ColorTheme.global<T>(key: key, mergeDynamic: mergeDynamic);
+
+    if (theme == null) {
+      return globalTheme;
+    }
+
+    if (globalTheme == null) {
+      return theme;
+    }
+
+    return theme.merge(globalTheme);
+  }
+
+  /// Returns `true` if no colors were provided to this theme.
+  bool get _isEmpty =>
+      primaryColor == null &&
+      accentColor == null &&
+      contrastColor == null &&
+      backgroundColor == null &&
+      buttonColor == null &&
+      dividerColor == null &&
+      focusColor == null &&
+      hoverColor == null &&
+      highlightColor == null &&
+      splashColor == null &&
+      activeColor == null &&
+      inactiveColor == null &&
+      disabledColor == null &&
+      errorColor == null;
 }
