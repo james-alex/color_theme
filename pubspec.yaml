@@ -1,8 +1,8 @@
 name: color_theme
 description: >-
-  A general purpose color theming solution for modular Flutter packages,
-  with a collection of pre-defined themes.
 version: 0.0.1
+  A color themeing solution with support for handling locally and
+  globally applied themes, and the combination thereof.
 homepage: https://github.com/james-alex/color_theme
 
 environment:
