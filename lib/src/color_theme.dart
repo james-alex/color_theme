@@ -216,6 +216,7 @@ class ColorTheme implements MergeableObject<ColorTheme> {
     assert(mergeDynamic != null);
 
     var colorTheme = ColorTheme(
+      key: key,
       primaryColor: primaryColor,
       accentColor: accentColor,
       contrastColor: contrastColor,
