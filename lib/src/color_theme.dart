@@ -300,6 +300,30 @@ class ColorTheme implements MergeableObject<ColorTheme> {
     return theme.merge(globalTheme);
   }
 
+  /// Registers a callback that's provided the global [ColorTheme] associated
+  /// with the given [key] and sub-type ([T]) whenever it's been added, removed,
+  /// or updated.
+  ///
+  /// If [mergeDynamic] is `true` and the sub-type ([T]) isn't [dynamic], the
+  /// [ColorTheme] provided to the [callback] will be merged with the global
+  /// [ColorTheme] associated with the [key] and a [dynamic] sub-type ([T]).
+  static void addGlobalChangeCallback<T>(
+    ObjectChanged<ColorTheme> callback, {
+    Key key,
+    bool mergeDynamic = true,
+  }) {
+    assert(callback != null);
+    assert(mergeDynamic != null);
+
+    _global.addChangeCallback<T>(callback,
+        key: key, joinDynamic: mergeDynamic ? JoinMethod.merge : null);
+  }
+
+  /// Removes the last added global change callback associated with [key].
+  static void removeGlobalChangeCallback<T>({Key key}) {
+    _global.removeChangeCallback<T>(key: key);
+  }
+
   @override
   bool operator ==(Object other) =>
       other is ColorTheme &&
