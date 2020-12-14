@@ -300,6 +300,41 @@ class ColorTheme implements MergeableObject<ColorTheme> {
     return theme.merge(globalTheme);
   }
 
+  @override
+  bool operator ==(Object other) =>
+      other is ColorTheme &&
+      primaryColor == other.primaryColor &&
+      accentColor == other.accentColor &&
+      contrastColor == other.contrastColor &&
+      backgroundColor == other.backgroundColor &&
+      buttonColor == other.buttonColor &&
+      dividerColor == other.dividerColor &&
+      focusColor == other.focusColor &&
+      hoverColor == other.hoverColor &&
+      highlightColor == other.highlightColor &&
+      splashColor == other.splashColor &&
+      activeColor == other.activeColor &&
+      inactiveColor == other.inactiveColor &&
+      disabledColor == other.disabledColor &&
+      errorColor == other.errorColor;
+
+  @override
+  int get hashCode =>
+      primaryColor.hashCode ^
+      accentColor.hashCode ^
+      contrastColor.hashCode ^
+      backgroundColor.hashCode ^
+      buttonColor.hashCode ^
+      dividerColor.hashCode ^
+      focusColor.hashCode ^
+      hoverColor.hashCode ^
+      highlightColor.hashCode ^
+      splashColor.hashCode ^
+      activeColor.hashCode ^
+      inactiveColor.hashCode ^
+      disabledColor.hashCode ^
+      errorColor.hashCode;
+
   /// Returns `true` if no colors were provided to `this`.
   bool get _isEmpty =>
       primaryColor == null &&
