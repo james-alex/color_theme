@@ -182,13 +182,13 @@ class ColorTheme implements MergeableObject<ColorTheme> {
   ///
   /// If a global [ColorTheme] associated with the given [key] and sub-type
   /// ([T]) doesn't exist, a new global [ColorTheme] will be created. However,
-  /// If one does exist, the existing theme will be returned, if no additional
+  /// if one does exist, the existing theme will be returned if no additional
   /// values were provided.
   ///
   /// If a corresponding global theme does exist and additional values were
   /// provided and [merge] is `true`, the provided values will be merged into
   /// the existing global theme, otherwise if `false`, the existing theme will
-  /// be replaced outright by a new [ColorTheme] containing the provided values.
+  /// be replaced outright by a new [ColorTheme] with the provided values.
   ///
   /// If [mergeDynamic] is `true` and a global theme associated with the
   /// given [key] and a [dynamic] sub-type exists, it will be [merge]d into
