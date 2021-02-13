@@ -254,6 +254,9 @@ class ColorTheme extends MergeableObject<ColorTheme> {
     Color inactiveColor,
     Color disabledColor,
     Color errorColor,
+  ///
+  /// Returns `null` if no values were provided and a global theme doesn't
+  /// already exist.
     bool merge = true,
     bool mergeDynamic = true,
   }) {
