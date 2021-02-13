@@ -303,7 +303,7 @@ class ColorTheme extends MergeableObject<ColorTheme> {
 
   /// Returns `true` if a global theme associated with the [key] and
   /// sub-type ([T]) exists.
-  static bool globalThemeExists<T>([Key key]) => _global.exists<T>(key: key);
+  static bool globalThemeExists<T>({Key key}) => _global.exists<T>(key: key);
 
   /// Returns the global theme associated with the [key] and sub-type ([T]).
   ///
@@ -312,10 +312,10 @@ class ColorTheme extends MergeableObject<ColorTheme> {
   /// __Note:__ [dynamic] sub-typed themes will not be merged into the returned
   /// theme, call [ColorTheme.global] to retrieve a theme that is merged with
   /// the [dynamic] sub-typed theme, if one exists.
-  static ColorTheme getGlobalTheme<T>([Key key]) => _global.get<T>(key: key);
+  static ColorTheme getGlobalTheme<T>({Key key}) => _global.get<T>(key: key);
 
   /// Removes the global theme associated with the [key] and sub-type ([T]).
-  static ColorTheme removeGlobalTheme<T>([Key key]) =>
+  static ColorTheme removeGlobalTheme<T>({Key key}) =>
       _global.remove<T>(key: key);
 
   /// Returns a new [ColorTheme] by merging [theme] with the global theme
