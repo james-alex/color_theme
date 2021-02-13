@@ -1,6 +1,6 @@
-import 'package:flutter_object_map/flutter_object_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_object_map/flutter_object_map.dart';
 
 /// A color themeing solution with support for handling locally and
 /// globally applied themes, and the combination thereof.
@@ -8,12 +8,16 @@ import 'package:flutter/widgets.dart';
 /// [ColorTheme] is derived from and is compatible with Flutter's
 /// Material [ThemeData] object.
 @immutable
-class ColorTheme implements MergeableObject<ColorTheme> {
+class ColorTheme extends MergeableObject<ColorTheme> {
   /// A color themeing solution with support for handling locally and
   /// globally applied themes, and the combination thereof.
   ///
   /// [ColorTheme] is derived from and is compatible with Flutter's
   /// Material [ThemeData] object.
+  ///
+  /// If [inherit] is `false`, other [ColorTheme]s will not be [merge]d
+  /// into `this` theme, however `this` theme may still be [merge]d into
+  /// other [ColorTheme]s.
   const ColorTheme({
     this.key,
     this.primaryColor,
@@ -30,7 +34,9 @@ class ColorTheme implements MergeableObject<ColorTheme> {
     this.inactiveColor,
     this.disabledColor,
     this.errorColor,
-  });
+    bool inherit = true,
+  })  : assert(inherit != null),
+        super(inherit: inherit);
 
   /// A unique identifier used to define and retrieve global [ColorTheme]s
   /// with the [ColorTheme.global] constructor/provider and the related
@@ -104,7 +110,9 @@ class ColorTheme implements MergeableObject<ColorTheme> {
   /// any `null` values fallback to [colors]' values.
   @override
   ColorTheme merge(ColorTheme colors) {
-    assert(colors != null);
+    if (!inherit || colors == null) {
+      return this;
+    }
 
     return ColorTheme(
       key: key ?? colors.key,
@@ -123,6 +131,43 @@ class ColorTheme implements MergeableObject<ColorTheme> {
       errorColor: errorColor ?? colors.errorColor,
     );
   }
+
+  /// Creates a copy of `this`, replacing the given values with the new values.
+  ColorTheme copyWith({
+    Key key,
+    Color primaryColor,
+    Color accentColor,
+    Color contrastColor,
+    Color backgroundColor,
+    Color buttonColor,
+    Color dividerColor,
+    Color focusColor,
+    Color hoverColor,
+    Color highlightColor,
+    Color splashColor,
+    Color activeColor,
+    Color inactiveColor,
+    Color disabledColor,
+    Color errorColor,
+    bool inherit,
+  }) =>
+      ColorTheme(
+        key: key ?? this.key,
+        primaryColor: primaryColor ?? this.primaryColor,
+        accentColor: accentColor ?? this.accentColor,
+        backgroundColor: backgroundColor ?? this.backgroundColor,
+        buttonColor: buttonColor ?? this.buttonColor,
+        dividerColor: dividerColor ?? this.dividerColor,
+        focusColor: focusColor ?? this.focusColor,
+        hoverColor: hoverColor ?? this.hoverColor,
+        highlightColor: highlightColor ?? this.highlightColor,
+        splashColor: splashColor ?? this.splashColor,
+        activeColor: activeColor ?? this.activeColor,
+        inactiveColor: inactiveColor ?? this.inactiveColor,
+        disabledColor: disabledColor ?? this.disabledColor,
+        errorColor: errorColor ?? this.errorColor,
+        inherit: inherit ?? this.inherit,
+      );
 
   /// Returns the colors from `this` as a Material [ThemeData] object.
   ThemeData toThemeData() => ThemeData(
@@ -307,7 +352,7 @@ class ColorTheme implements MergeableObject<ColorTheme> {
   /// If [mergeDynamic] is `true` and the sub-type ([T]) isn't [dynamic], the
   /// [ColorTheme] provided to the [callback] will be merged with the global
   /// [ColorTheme] associated with the [key] and a [dynamic] sub-type ([T]).
-  static void addGlobalChangeCallback<T>(
+  static void addChangeCallback<T>(
     ObjectChanged<ColorTheme> callback, {
     Key key,
     bool mergeDynamic = true,
@@ -319,9 +364,34 @@ class ColorTheme implements MergeableObject<ColorTheme> {
         key: key, joinDynamic: mergeDynamic ? JoinMethod.merge : null);
   }
 
-  /// Removes the last added global change callback associated with [key].
-  static void removeGlobalChangeCallback<T>({Key key}) {
-    _global.removeChangeCallback<T>(key: key);
+  /// Removes the last added change callback associated with [key].
+  static void removeChangeCallback<T>(
+    ObjectChanged<ColorTheme> callback, {
+    Key key,
+  }) {
+    assert(callback != null);
+    _global.removeChangeCallback<T>(callback, key: key);
+  }
+
+  /// Registers a callback that's provided the global [ColorTheme] associated
+  /// with the given [key] whenever a change has been made, regardless of the
+  /// object's associated type.
+  static void addGlobalChangeCallback(
+    ObjectChanged<ColorTheme> callback, {
+    Key key,
+  }) {
+    assert(callback != null);
+
+    _global.addGlobalChangeCallback(callback, key: key);
+  }
+
+  /// Removes the globally registered [callback] associated with [key].
+  static void removeGlobalChangeCallback(
+    ObjectChanged<ColorTheme> callback, {
+    Key key,
+  }) {
+    assert(callback != null);
+    _global.removeGlobalChangeCallback(callback, key: key);
   }
 
   @override
@@ -357,7 +427,8 @@ class ColorTheme implements MergeableObject<ColorTheme> {
       activeColor.hashCode ^
       inactiveColor.hashCode ^
       disabledColor.hashCode ^
-      errorColor.hashCode;
+      errorColor.hashCode ^
+      inherit.hashCode;
 
   /// Returns `true` if no colors were provided to `this`.
   bool get _isEmpty =>
