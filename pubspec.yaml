@@ -2,7 +2,7 @@ name: color_theme
 description: >-
   A color themeing solution with support for handling locally and
   globally applied themes, and the combination thereof.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/james-alex/color_theme
 
 environment:

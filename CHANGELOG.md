@@ -1,3 +1,9 @@
+## [0.0.3] - February 13, 2020
+
+* Minor semantic and documentation updates.
+
+* Added pedantic.
+
 ## [0.0.2] - February 13, 2020
 
 * Added support for global themes.
