@@ -238,6 +238,9 @@ class ColorTheme extends MergeableObject<ColorTheme> {
   /// If [mergeDynamic] is `true` and a global theme associated with the
   /// given [key] and a [dynamic] sub-type exists, it will be [merge]d into
   /// the returned theme.
+  ///
+  /// Returns `null` if no values were provided and a global theme doesn't
+  /// already exist.
   static ColorTheme global<T>({
     Key key,
     Color primaryColor,
@@ -254,9 +257,6 @@ class ColorTheme extends MergeableObject<ColorTheme> {
     Color inactiveColor,
     Color disabledColor,
     Color errorColor,
-  ///
-  /// Returns `null` if no values were provided and a global theme doesn't
-  /// already exist.
     bool merge = true,
     bool mergeDynamic = true,
   }) {
@@ -315,9 +315,9 @@ class ColorTheme extends MergeableObject<ColorTheme> {
   static ColorTheme getGlobalTheme<T>({Key key}) => _global.get<T>(key: key);
 
   /// Removes the global theme associated with the [key] and sub-type ([T]).
-  static ColorTheme removeGlobalTheme<T>({Key key}) =>
   ///
   /// Returns `null` if no global theme [assocaited] with key exists.
+  static ColorTheme removeGlobalTheme<T>({Key key}) =>
       _global.remove<T>(key: key);
 
   /// Returns a new [ColorTheme] by merging [theme] with the global theme
@@ -329,12 +329,12 @@ class ColorTheme extends MergeableObject<ColorTheme> {
   /// If [mergeDynamic] is `true` and the sub-type ([T]) isn't [dynamic], the
   /// global theme associated with the [key] and a [dynamic] sub-type will be
   /// [merge]d into the returned theme, if one exists.
-  static ColorTheme mergeWithGlobal<T>(
-    ColorTheme theme, {
-    Key key,
   ///
   /// Returns `null` if [theme] is `null` and a global theme associated with
   /// [key] doesn't exist.
+  static ColorTheme mergeWithGlobal<T>(
+    ColorTheme theme, {
+    Key key,
     bool mergeDynamic = true,
   }) {
     assert(mergeDynamic != null);
