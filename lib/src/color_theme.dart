@@ -212,7 +212,7 @@ class ColorTheme extends MergeableObject<ColorTheme> {
   }
 
   /// The map containing the registered global themes.
-  static MergeableObjectMap<ColorTheme> _global =
+  static final MergeableObjectMap<ColorTheme> _global =
       MergeableObjectMap<ColorTheme>();
 
   /// Registers `this` as a global theme, allowing it to be accessed
