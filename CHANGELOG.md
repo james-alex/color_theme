@@ -1,3 +1,7 @@
+## [1.0.0-nullsafety]
+
+* Migrated to null-safe code.
+
 ## [0.0.3] - February 13, 2020
 
 * Minor semantic and documentation updates.
